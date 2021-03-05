@@ -4,9 +4,16 @@ let IMAGES = `${BASE_URL}images/`
 //entryway to the app
 function init() {
     signIn()
+    .then(fetchCall())
     //CLEAR THE DOM
-    // fetch(BASE_URL+"images").then(res => res.json())
-    // .then(res => res.forEach(renderImages))
+    
+}
+
+//fetches the data 
+function fetchCall() {
+    document.body.main.innerHTML = ""
+    fetch(BASE_URL+"images").then(res => res.json())
+    .then(res => res.forEach(renderImages))
 }
 
 //for signing in
@@ -29,10 +36,25 @@ function signIn() {
     signInForm.onsubmit = getUser
 }
 
-//gets the user from thebackend
+//gets the user from the backend
 function getUser(e) {
     e.preventDefault()
-    console.log(e.target)
+    let username = e.target.username.value
+    let user = {
+        username: username
+    }
+    let request = {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(user)
+    }
+    
+    fetch(BASE_URL+ "users/get_user", request).then(res => res.json())
+    .then(user => {user = {id, username}})
+    return user
+    // console.log(e.target.username.value)
 }
 
 //puts the image on the DOM
