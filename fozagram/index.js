@@ -1,19 +1,10 @@
 let BASE_URL = "http://localhost:3000/"
 let IMAGES = `${BASE_URL}images/`
+let USER = {}
 
 //entryway to the app
 function init() {
     signIn()
-    .then(fetchCall())
-    //CLEAR THE DOM
-    
-}
-
-//fetches the data 
-function fetchCall() {
-    document.body.main.innerHTML = ""
-    fetch(BASE_URL+"images").then(res => res.json())
-    .then(res => res.forEach(renderImages))
 }
 
 //for signing in
@@ -33,7 +24,8 @@ function signIn() {
     signInForm.append(usernameBox, submit)
     main.append(h2, h3, signInForm)
     document.body.appendChild(main)
-    signInForm.onsubmit = getUser
+    signInForm.onsubmit = function(event) {return getUser(event)}
+    // return user
 }
 
 //gets the user from the backend
@@ -52,9 +44,17 @@ function getUser(e) {
     }
     
     fetch(BASE_URL+ "users/get_user", request).then(res => res.json())
-    .then(user => {user = {id, username}})
-    return user
+    .then(res => {USER = {id: res.id, username: res.username}})
+    .then(_ => {fetchImages()}) 
+    // return user
     // console.log(e.target.username.value)
+}
+
+//fetches the images 
+function fetchImages() {
+    document.querySelector('main').hidden = true
+    fetch(BASE_URL+"images").then(res => res.json())
+    .then(res => res.forEach(renderImages))
 }
 
 //puts the image on the DOM
@@ -71,9 +71,13 @@ function renderImages(image) {
         postedBy.innerHTML = `Posted by: ${image.user.username}`
     let likesDiv = document.createElement('div')
     let likeSpan = document.createElement('span')
+        likeSpan.id = `image-${image.id}`
         likeSpan.innerHTML = `${image.likes.length} likes`
     let likeButton = document.createElement('button')
         likeButton.innerText = "❤️"
+        likeButton.dataset.id = image.id
+        likeButton.dataset.likes = image.likes.length
+        likeButton.onclick = increaseLikes
     likesDiv.append(likeSpan, likeButton)
     commentsUl = document.createElement('ul')
     image.comments.length > 0 ? parseComments(image.comments) : noComments()
@@ -109,6 +113,28 @@ const noComments = () => {
     let li = document.createElement('li')
         li.innerHTML = "This post has no comments, yet"
     commentsUl.appendChild(li)
+}
+
+//increases the likeCount
+function increaseLikes(e) {
+    let button = e.target
+    const newLikes = {
+        user_id: USER.id,
+        image_id: button.dataset.id
+    }
+
+    const reqObj = {
+        headers: {'Content-Type': 'application/json'},
+        method: "POST",
+        body: JSON.stringify(newLikes)
+      }
+
+    fetch(BASE_URL+`likes`, reqObj)
+    .then(r => r.json())
+    .then(updatedLikes => {
+        e.target.dataset.likes = updatedLikes.likes.length
+        document.getElementById(`image-${updatedLikes.id}`).innerText = `${updatedLikes.likes.length} likes`
+    })
 }
 
 init()

@@ -11,4 +11,9 @@ class ImagesController < ApplicationController
             }
             }, except: [:created_at, :updated_at]
     end
+
+    # def update 
+    #     byebug
+    #     Image
+    # end
 end
