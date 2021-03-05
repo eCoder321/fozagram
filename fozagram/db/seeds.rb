@@ -19,6 +19,6 @@ femi = User.create(username: "Femi")
 img1 = Image.create(src: "https://dev-to-uploads.s3.amazonaws.com/uploads/articles/jd4zsat1abi1ns7qshfc.jpg", alt: "Portrait: a man facing his right", )
 img2 = Image.create(src: "https://dev-to-uploads.s3.amazonaws.com/uploads/articles/oparij485sb6rtt723oh.jpg", alt: "Portrait: a man drawing")
 img3 = Image.create(src: "https://dev-to-uploads.s3.amazonaws.com/uploads/articles/bi3f52r3c0flku1i0w8g.jpg", alt: "Portrait: a smiling woman, big sur background")
-img4 = Image.create(src: "https://dev-to-uploads.s3.amazonaws.com/uploads/articles/krsk5pat5k3a6dlxt9ym.jpg", alt: "US Capitol Building looking down Pennsylvania ave")
+img4 = Image.create(src: "https://dev-to-uploads.s3.amazonaws.com/uploads/articles/c1wrk5z459jljt367ere.jpg", alt: "US Capitol Building looking down Pennsylvania ave")
 
 zed.images.push(img1, img2, img3, img4)
