@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
-  resources :likes
-  resources :comments
+  resources :likes, only: [:create]
+  resources :comments, only: [:create]
   resources :images
   resources :users
   post 'users/get_user' => 'users#get_user'

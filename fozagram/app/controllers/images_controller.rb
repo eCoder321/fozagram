@@ -16,4 +16,26 @@ class ImagesController < ApplicationController
     #     byebug
     #     Image
     # end
+
+    # code below is from blog post (modified by zed)
+
+    def create
+        @user = User.find_by(id: params[:user_id])
+      
+        @image = Image.create(image_params())
+        respond_to_image
+    end
+      
+    private def image_params
+        params.permit(:src, :alt, :user_id)
+    end
+      
+    private def respond_to_image
+        if @image.valid?
+            image_serializer = Image.new(image: @image, user: @user)
+            render json: image_serializer.serialize_new_image
+        else
+            render json: { errors: post.errors }, status: 400
+        end
+    end
 end
