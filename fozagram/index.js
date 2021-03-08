@@ -1,6 +1,10 @@
+// import { func } from "prop-types"
+
 let BASE_URL = "http://localhost:3000/"
 let IMAGES = `${BASE_URL}images/`
 let USER = {}
+
+// import {logHi } from './cloudinary.js'
 
 //entryway to the app
 function init() {
@@ -44,7 +48,7 @@ function getUser(e) {
     
     fetch(BASE_URL+ "users/get_user", request).then(res => res.json())
     .then(res => {USER = {id: res.id, username: res.username}})
-    .then(_ => {fetchImages()}) 
+    .then(_ => {uploadImageForm(); fetchImages()}) 
 }
 
 //fetches the images 
@@ -64,15 +68,19 @@ function renderImages(image) {
     let img = document.createElement('img')
             img.src = image.src
             img.alt = image.alt
+            img.className = 'img'
             // img.id = image.id
             checkPhoto(img)
     let postedBy = document.createElement('p')
+        postedBy.className = 'postedBy'
         postedBy.innerHTML = `Posted by: ${image.user.username}`
     let likesDiv = document.createElement('div')
+        likesDiv.className = 'likesDiv'
     let likeSpan = document.createElement('span')
         likeSpan.id = `image-${image.id}`
         likeSpan.innerHTML = `${image.likes.length} likes`
     let likeButton = document.createElement('button')
+        likeButton.className = "likeButton"
         likeButton.innerText = "❤️"
         likeButton.dataset.id = image.id
         likeButton.dataset.likes = image.likes.length
@@ -103,7 +111,7 @@ function checkPhoto(img) {
 //parses all comments and appends it to the commentsUl
 const parseComments = comment => {
         let li = document.createElement('li')
-        li.innerHTML = comment.content
+        li.innerHTML = `${comment.user.username}: ${comment.content}`
         commentsUl.appendChild(li)
     }
 
@@ -173,7 +181,7 @@ function handleComment(e) {
     .then(res => {
         let commentsUl = document.getElementById(res.image_id).querySelector('ul')
         let li = document.createElement('li')
-            li.innerHTML = res.content
+            li.innerHTML = `${res.user.username}: ${res.content}`
         if (commentsUl.innerText == "This post has no comments, yet") {
             commentsUl.innerHTML = ""
         }
@@ -181,6 +189,50 @@ function handleComment(e) {
     })    
 
     form.reset()
+}
+
+//upload a new image
+function uploadImageForm() {
+    let imageForm = document.createElement('form')
+    let imageSrc = document.createElement('input')
+        imageSrc.type = 'text'
+        imageSrc.name = "image"
+        imageSrc.placeholder = "url to image"
+    let imageAlt = document.createElement('input')
+        imageAlt.type = 'text'
+        imageAlt.name = "alt"
+        imageAlt.placeholder = "what are you uploading?"
+    let submitImage = document.createElement('button')
+        submitImage.type = 'submit'
+        submitImage.innerHTML = "Foz an image😜"
+    imageForm.append(imageSrc, imageAlt, submitImage)
+        imageForm.className = "image-form"
+        imageForm.onsubmit = handleImage
+    // bottomImageForm.innerHTML = imageForm.innerHTML
+    // document.body.append(bottomImageForm)
+    document.body.append(imageForm)
+}
+
+function handleImage(e) {
+    e.preventDefault()
+    let form = e.target
+    let image = {
+        user_id: USER.id,
+        src: form.image.value,
+        alt: form.alt.value
+    }
+
+    let request = {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        body: JSON.stringify(image)
+    }
+
+    fetch(IMAGES, request).then(res => res.json())
+    .then(renderImages)
 }
 
 init()

@@ -33,7 +33,7 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
 
   # change this for cloud storage
-  config.active_storage.service = :cloudinary #:local
+  config.active_storage.service = :local #:cloudinary
 
   # Mount Action Cable outside main process or domain.
   # config.action_cable.mount_path = nil
