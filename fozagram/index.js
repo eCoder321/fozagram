@@ -54,7 +54,7 @@ function getUser(e) {
             uploadImageForm(); fetchImages()
         }
         else {
-            window.alert("Your username must be two characters or more");
+            alert("Your username must be two characters or more");
             form.reset()
         }
     }
@@ -134,7 +134,9 @@ function likeColorChanger(likes, likeButton) {
 //parses all comments and appends it to the commentsUl
 const parseComments = comment => {
         let li = document.createElement('li')
-        li.innerHTML = `${comment.user.username}: ${comment.content}`
+            li.id = comment.id
+            li.innerHTML = `${comment.user.username}: ${comment.content}`
+            li.ondblclick = editComment
         commentsUl.appendChild(li)
     }
 
@@ -162,7 +164,6 @@ function increaseLikes(e) {
     fetch(BASE_URL+`likes`, reqObj)
     .then(r => r.json())
     .then(updatedImage => {
-        // debugger
         e.target.dataset.likes = updatedImage.likes
         document.getElementById(`image-${updatedImage.id}`).innerText = `${updatedImage.likes.length} likes`
         likeColorChanger(updatedImage.likes, button)
@@ -204,10 +205,11 @@ function handleComment(e) {
     }
 
     fetch(BASE_URL+"comments", request).then(res => res.json())
-    .then(res => {
-        let commentsUl = document.getElementById(res.image_id).querySelector('ul')
+    .then(comment => {
+        let commentsUl = document.getElementById(comment.image_id).querySelector('ul')
         let li = document.createElement('li')
-            li.innerHTML = `${res.user.username}: ${res.content}`
+            li.innerHTML = `${comment.user.username}: ${comment.content}`
+            li.id = comment.id
         if (commentsUl.innerText == "This post has no comments, yet") {
             commentsUl.innerHTML = ""
         }
@@ -215,6 +217,15 @@ function handleComment(e) {
     })    
 
     form.reset()
+}
+
+//edits a comment ONLY OWNER ALLOWED
+function editComment(e) {
+    let comment = e.target.innerText.split(': ')
+    if (comment[0] === USER.username) {
+
+        debugger
+    }
 }
 
 //upload a new image
