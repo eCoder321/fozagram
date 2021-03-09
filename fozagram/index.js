@@ -108,17 +108,12 @@ function renderImages(image) {
 
 //changes the likebutton className
 function likeColorChanger(likes, likeButton) {
-    
-    likes.forEach(like => {
-        if (USER.id == like.user_id) {
-            likeButton.className = "likedHeart"
-        }
-        else {
-            likeButton.className = "likeButton"
-        }
-    })
-
-    if (likes.length == 0) {likeButton.className = "likeButton"}
+    if (likes.map(e => e.user_id).includes(USER.id)) {
+        likeButton.className = "likedHeart";
+    }
+    else {
+        likeButton.className = "likeButton"
+    }
 }
 
 //dynamically sets the orientation of photo
