@@ -68,6 +68,7 @@ function renderImages(image) {
     let img = document.createElement('img')
             img.src = image.src
             img.alt = image.alt
+            img.title = image.alt
             img.className = 'img'
             // img.id = image.id
             checkPhoto(img)
