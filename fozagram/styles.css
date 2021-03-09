@@ -5,52 +5,67 @@
 } */
 
 * {
+    top: 20px;
     font-family: Helvetica, Arial, sans-serif;
     box-sizing: border-box;
     font-size: 18px;
 }
 
 .imageDiv {
-    width: 100%;
-    display: flex;
-    align-content: left;
-    border: 8px solid Black;
-    border-radius: 15px;
-    text-align: left;
-    background-color: white;
+  margin: auto;
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  align-content: stretch;
+  border: 8px solid Black;
+  border-radius: 15px;
+  text-align: center;
+  background-color: white;
 }
 
 .img {
-text-align: left;
-left: 5px;
-border-radius: 3px;
+  max-width: 99.9%;
+  align-self: center;
+  /* left: 5px; */
+  border-radius: 5px;
+}
+
+.landscape {
+  max-width: 99.9%;
+  align-self: center;
+  /* left: 5px; */
+  border-radius: 5px;
 }
 
 .postedBy {
-    align-self: flex-end;
-    text-align: left;
-    bottom: 2px;
+  align-self: center;
+  /* text-align: left; */
+  /* bottom: 2px; */
 }
 
 .likesDiv {
-  align-self: flex-end;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
 }
 
 #likeSpan {
-    text-align: left;
-    bottom: 5px;
+    text-align: center;
+    /* right: 3px; */
 }
 
 .likeButton {
+  /* left: 3px; */
   outline-style: none;
   color: rgb(211, 199, 202);
+  font-size: xx-large;
   padding: 0px;
   border: none;
   background: none;
   transition: color 300ms;
   cursor: pointer;
+  /* bottom: 10px */
 }
-
 
 .likeButton:hover {
   color: lightcoral
@@ -60,15 +75,32 @@ border-radius: 3px;
   color: crimson;
 }
 
-.commentsUL {
+.likedHeart {
+  outline-style: none;
+  color: crimson;
+  font-size: xx-large;
+  padding: 0px;
+  border: none;
+  background: none;
+  transition: color 300ms;
+  cursor: pointer;
+}
+
+.likedHeart:hover {
+  color: lightcoral
+}
+
+
+.commentsUl {
     list-style-type: none;
+    align-self: center;
     margin-left: 0;
-    padding-left: 10px;
+    padding-left: 0px;
   }
 
-.commentsUl li {
+/* .commentsUl li {
     margin: 2px 0;
-}
+} */
 
 /* .center{
     position:fixed;
@@ -78,21 +110,17 @@ border-radius: 3px;
    
   } */
 
-
+.commentForm {
+  align-self: center;
+}
 
 .image-form {
-    position:fixed;
-    width: 60%;
-    padding: 10px;
-    /* padding:20px; */
-    /* position:fixed; */
-    bottom:10px;
-    left:10%;
-    /* float: right; */
-    /* width:60%; */
-    background:red;
-    /* width:100%;
-    color:white;
+    position: fixed;
+    text-align: center;
+    width: 100%;
+    padding: 0px;
+    top: 0;
+    left: 0;
+    background:white;
     font-weight:bold;
-    border-radius: 64px; */
 }

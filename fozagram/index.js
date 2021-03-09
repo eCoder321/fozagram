@@ -28,12 +28,13 @@ function signIn() {
     signInForm.append(usernameBox, submit)
     main.append(h2, h3, signInForm)
     document.body.appendChild(main)
-    signInForm.onsubmit = function(event) {return getUser(event)}
+    signInForm.onsubmit = function(event) { getUser(event)}
 }
 
 //gets the user from the backend
 function getUser(e) {
     e.preventDefault()
+    let form = e.target
     let username = e.target.username.value
     let user = {
         username: username
@@ -47,8 +48,16 @@ function getUser(e) {
     }
     
     fetch(BASE_URL+ "users/get_user", request).then(res => res.json())
-    .then(res => {USER = {id: res.id, username: res.username}})
-    .then(_ => {uploadImageForm(); fetchImages()}) 
+    .then(res => {USER = {id: res.id, username: res.username}; ifElse()})
+    function ifElse() {
+        if (USER.id != null) {
+            uploadImageForm(); fetchImages()
+        }
+        else {
+            window.alert("Your username must be two characters or more");
+            form.reset()
+        }
+    }
 }
 
 //fetches the images 
@@ -71,7 +80,7 @@ function renderImages(image) {
             img.title = image.alt
             img.className = 'img'
             // img.id = image.id
-            checkPhoto(img)
+            // checkPhoto(img)
     let postedBy = document.createElement('p')
         postedBy.className = 'postedBy'
         postedBy.innerHTML = `Posted by: ${image.user.username}`
@@ -82,12 +91,14 @@ function renderImages(image) {
         likeSpan.innerHTML = `${image.likes.length} likes`
     let likeButton = document.createElement('button')
         likeButton.className = "likeButton"
-        likeButton.innerText = "❤️"
+        likeColorChanger(image.likes, likeButton)
+        likeButton.innerText = "♥︎"
         likeButton.dataset.id = image.id
         likeButton.dataset.likes = image.likes.length
         likeButton.onclick = increaseLikes
     likesDiv.append(likeSpan, likeButton)
     commentsUl = document.createElement('ul')
+        commentsUl.className = "commentsUl"
         // commentsUl.id = `comment-${image.id}`
     image.comments.length > 0 ? image.comments.forEach(parseComments) : noComments()
     let writeCommentBox = writeComment()
@@ -95,19 +106,35 @@ function renderImages(image) {
     mainCard.appendChild(imgCard)
 }
 
-//dynamically sets the orientation of photo
-function checkPhoto(img) {
-    img.onload = function() {
-        if (this.width > this.height) {
-            img.width = 600;
-            img.height = 400;
+//changes the likebutton className
+function likeColorChanger(likes, likeButton) {
+    
+    likes.forEach(like => {
+        if (USER.id == like.user_id) {
+            likeButton.className = "likedHeart"
         }
         else {
-            img.width = 400;
-            img.height = 600;
-        } 
-    }
+            likeButton.className = "likeButton"
+        }
+    })
+
+    if (likes.length == 0) {likeButton.className = "likeButton"}
 }
+
+//dynamically sets the orientation of photo
+// function checkPhoto(img) {
+//     img.onload = function() {
+//         if (this.width > this.height) {
+//             img.width = 600;
+//             img.height = 400;
+//             img.className = 'landscape'
+//         }
+//         else {
+//             img.width = 400;
+//             img.height = 600;
+//         } 
+//     }
+// }
 
 //parses all comments and appends it to the commentsUl
 const parseComments = comment => {
@@ -136,18 +163,21 @@ function increaseLikes(e) {
         method: "POST",
         body: JSON.stringify(newLikes)
       }
-
+    
     fetch(BASE_URL+`likes`, reqObj)
     .then(r => r.json())
-    .then(updatedLikes => {
-        e.target.dataset.likes = updatedLikes.likes.length
-        document.getElementById(`image-${updatedLikes.id}`).innerText = `${updatedLikes.likes.length} likes`
+    .then(updatedImage => {
+        // debugger
+        e.target.dataset.likes = updatedImage.likes
+        document.getElementById(`image-${updatedImage.id}`).innerText = `${updatedImage.likes.length} likes`
+        likeColorChanger(updatedImage.likes, button)
     })
 }
 
 //add a new comment
 function writeComment() {
     let commentForm = document.createElement('form')
+        commentForm.className = 'commentForm'
     let commentArea = document.createElement('input')
         commentArea.type = 'text'
         commentArea.name = "comment"
