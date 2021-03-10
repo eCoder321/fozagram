@@ -256,18 +256,19 @@ function uploadImageForm() {
         fileInput.innerHTML = "Select an Image"
 
     // fileUpload.appendChild(fileInput)
+    // imageForm.append(fileUpload, imageAlt, submitImage)
     imageForm.append(fileInput, imageAlt, submitImage)
     document.body.prepend(imageForm)
 
     imageForm.addEventListener('submit', function(event) {
             event.preventDefault()
+            // let file = event.target.querySelector('form')[0].files[0]
             let file = event.target[0].files[0]
-            // debugger
             // console.log(file)
             let formData = new FormData()
             formData.append('file', file)
             formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET)
-            debugger
+        
             axios({
                 url: CLOUDINARY_URL+"upload",
                 method: "POST",
@@ -283,7 +284,6 @@ function uploadImageForm() {
                 // send the URL, send the user id, and send alt to handleImage
                 handleImage(imageSrc, altText)
                 document.querySelector('.image-form').reset()
-
             }).catch(function(err) {
                 console.log(err)
             })
@@ -291,7 +291,7 @@ function uploadImageForm() {
 }
 
 function handleImage(imageSrc, altText) {
-    debugger
+    // debugger
     // e.preventDefault()
     // let form = e.target
     let image = {
