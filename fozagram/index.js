@@ -1,17 +1,21 @@
-// import { func } from "prop-types"
-
 let BASE_URL = "http://localhost:3000/"
 let IMAGES = `${BASE_URL}images/`
+let COMMENTS = `${BASE_URL}comments/`
 let USER = {}
 const CLOUDINARY_URL = 	'https://api.cloudinary.com/v1_1/flatironschool/'
 const CLOUDINARY_UPLOAD_PRESET = "duk9in8e"
+<<<<<<< HEAD
 
 // import {logHi } from './cloudinary.js'
+=======
+>>>>>>> main
 
 // entryway to the app
 function init() {
     signIn()
 }
+
+//--------USER & SIGN IN---------
 
 //for getting the userName
 function signIn() {
@@ -56,11 +60,15 @@ function getUser(e) {
             uploadImageForm(); fetchImages()
         }
         else {
-            window.alert("Your username must be two characters or more");
+            alert("Your username must be two characters or more");
             form.reset()
         }
     }
 }
+
+//-----------END OF USER & SIGN IN-------------
+
+//-----------IMAGES SECTION-----------------
 
 //fetches the images 
 function fetchImages() {
@@ -108,48 +116,146 @@ function renderImages(image) {
     mainCard.appendChild(imgCard)
 }
 
-//changes the likebutton className
-function likeColorChanger(likes, likeButton) {
-    
-    likes.forEach(like => {
-        if (USER.id == like.user_id) {
-            likeButton.className = "likedHeart"
-        }
-        else {
-            likeButton.className = "likeButton"
-        }
-    })
+//upload a new image
+// function uploadImageForm() {
+//     let imageForm = document.createElement('form')
+//     let imageSrc = document.createElement('input')
+//         imageSrc.type = 'text'
+//         imageSrc.name = "image"
+//         imageSrc.placeholder = "url to image"
+//     let imageAlt = document.createElement('input')
+//         imageAlt.type = 'text'
+//         imageAlt.name = "alt"
+//         imageAlt.placeholder = "what are you uploading?"
+//     let submitImage = document.createElement('button')
+//         submitImage.type = 'submit'
+//         submitImage.innerHTML = "Foz an image😜"
+//     imageForm.append(imageSrc, imageAlt, submitImage)
+//         imageForm.className = "image-form"
+//         imageForm.onsubmit = handleImage
+//     // bottomImageForm.innerHTML = imageForm.innerHTML
+//     // document.body.append(bottomImageForm)
+//     document.body.append(imageForm)
+//upload a new image
+function uploadImageForm() {
+    let imageForm = document.createElement('form')
+        imageForm.className = "image-form"
+        // imageForm.onsubmit = handleImage
+    // let imageSrc = document.createElement('input')
+    //     imageSrc.type = 'text'
+    //     imageSrc.name = "image"
+    //     imageSrc.placeholder = "url to image"
+    let imageAlt = document.createElement('input')
+        imageAlt.type = 'text'
+        imageAlt.name = "alt"
+        imageAlt.placeholder = "what are you uploading?"
+    let submitImage = document.createElement('button')
+        submitImage.type = 'submit'
+        submitImage.innerHTML = "Foz an image😜"
+    // imageForm.append(imageSrc, imageAlt, submitImage)
+    // // bottomImageForm.innerHTML = imageForm.innerHTML
+    // // document.body.append(bottomImageForm)
+    // document.body.append(imageForm)
 
-    if (likes.length == 0) {likeButton.className = "likeButton"}
+// let fileUpload = document.createElement('form')
+//     fileUpload.class = 'file-upload-container'
+//     fileUpload.for = 'file-upload'
+
+let fileInput = document.createElement('input')
+    fileInput.id = 'file-upload'
+    fileInput.type = 'file'
+    // fileInput.style = 'display:none'
+    fileInput.innerHTML = "Select an Image"
+
+// fileUpload.appendChild(fileInput)
+// imageForm.append(fileUpload, imageAlt, submitImage)
+imageForm.append(fileInput, imageAlt, submitImage)
+document.body.prepend(imageForm)
+
+imageForm.addEventListener('submit', function(event) {
+        event.preventDefault()
+        // let file = event.target.querySelector('form')[0].files[0]
+        let file = event.target[0].files[0]
+        // console.log(file)
+        let formData = new FormData()
+        formData.append('file', file)
+        formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET)
+    
+        axios({
+            url: CLOUDINARY_URL+"upload",
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            data: formData
+        }).then(function(res) {
+            console.log(res)
+            let imageSrc = res.data.secure_url
+            // console.log(imageSrc)
+            altText = event.target.alt.value
+            // send the URL, send the user id, and send alt to handleImage
+            handleImage(imageSrc, altText)
+            document.querySelector('.image-form').reset()
+        }).catch(function(err) {
+            console.log(err)
+        })
+    })
 }
 
-//dynamically sets the orientation of photo
-// function checkPhoto(img) {
-//     img.onload = function() {
-//         if (this.width > this.height) {
-//             img.width = 600;
-//             img.height = 400;
-//             img.className = 'landscape'
-//         }
-//         else {
-//             img.width = 400;
-//             img.height = 600;
-//         } 
+//handles uploading new images on the backend
+// function handleImage(e) {
+//     e.preventDefault()
+//     let form = e.target
+//     let image = {
+//         user_id: USER.id,
+//         src: form.image.value,
+//         alt: form.alt.value
 //     }
-// }
 
-//parses all comments and appends it to the commentsUl
-const parseComments = comment => {
-        let li = document.createElement('li')
-        li.innerHTML = `${comment.user.username}: ${comment.content}`
-        commentsUl.appendChild(li)
+//     let request = {
+//         method: "POST",
+//         headers: {
+//             "Content-Type": "application/json",
+//             "Accept": "application/json"
+//         },
+//         body: JSON.stringify(image)
+//     }
+
+//     fetch(IMAGES, request).then(res => res.json())
+//     .then(renderImages)
+function handleImage(imageSrc, altText) {
+    // debugger
+    // e.preventDefault()
+    // let form = e.target
+    let image = {
+        user_id: USER.id,
+        src: imageSrc,
+        alt: altText //form.alt.value
     }
+    
+    let request = {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        body: JSON.stringify(image)
+    }
+    
+    fetch(IMAGES, request).then(res => res.json())
+    .then(renderImages)
+}
+//------------END OF IMAGES SECTION------------
 
-// informs users that there's no comment yet
-const noComments = () => {
-    let li = document.createElement('li')
-        li.innerHTML = "This post has no comments, yet"
-    commentsUl.appendChild(li)
+//---------------LIKES SECTION-------------
+//changes the likebutton className based on whether the user likes it or not
+function likeColorChanger(likes, likeButton) {
+    if (likes.map(e => e.user_id).includes(USER.id)) {
+        likeButton.className = "likedHeart";
+    }
+    else {
+        likeButton.className = "likeButton"
+    }
 }
 
 //increases the likeCount
@@ -169,12 +275,47 @@ function increaseLikes(e) {
     fetch(BASE_URL+`likes`, reqObj)
     .then(r => r.json())
     .then(updatedImage => {
-        // debugger
         e.target.dataset.likes = updatedImage.likes
         document.getElementById(`image-${updatedImage.id}`).innerText = `${updatedImage.likes.length} likes`
         likeColorChanger(updatedImage.likes, button)
     })
 }
+
+//------------ END OF LIKES SECTION--------------
+//dynamically sets the orientation of photo
+// function checkPhoto(img) {
+//     img.onload = function() {
+//         if (this.width > this.height) {
+//             img.width = 600;
+//             img.height = 400;
+//             img.className = 'landscape'
+//         }
+//         else {
+//             img.width = 400;
+//             img.height = 600;
+//         } 
+//     }
+// }
+
+//------------------COMMENTS SECTION---------------
+
+//parses all comments and appends it to the commentsUl
+const parseComments = comment => {
+        let li = document.createElement('li')
+            li.id = `comment-${comment.id}`
+            li.innerHTML = `${comment.user.username}: ${comment.content}`
+            li.ondblclick = editComment
+        commentsUl.appendChild(li)
+    }
+
+// informs users that there's no comment yet
+const noComments = () => {
+    let li = document.createElement('li')
+        li.innerHTML = "This post has no comments, yet"
+    commentsUl.appendChild(li)
+}
+
+
 
 //add a new comment
 function writeComment() {
@@ -211,10 +352,16 @@ function handleComment(e) {
     }
 
     fetch(BASE_URL+"comments", request).then(res => res.json())
-    .then(res => {
-        let commentsUl = document.getElementById(res.image_id).querySelector('ul')
+    .then(comment => {
+        let commentsUl = document.getElementById(comment.image_id).querySelector('ul')
+        // let updateCommentBtn = document.createElement('button')
+        //     updateCommentBtn.innerHTML = "Update"
+        //     updateCommentBtn.type = 'submit'
         let li = document.createElement('li')
-            li.innerHTML = `${res.user.username}: ${res.content}`
+            li.innerHTML = `${comment.user.username}: ${comment.content}`
+            li.id = `comment-${comment.id}`
+            li.ondblclick = editComment
+            // li.appendChild(updateCommentBtn)
         if (commentsUl.innerText == "This post has no comments, yet") {
             commentsUl.innerHTML = ""
         }
@@ -224,6 +371,7 @@ function handleComment(e) {
     form.reset()
 }
 
+<<<<<<< HEAD
 //upload a new image
 function uploadImageForm() {
         let imageForm = document.createElement('form')
@@ -298,19 +446,73 @@ function handleImage(imageSrc, altText) {
         user_id: USER.id,
         src: imageSrc,
         alt: altText //form.alt.value
+=======
+//edits a comment ONLY OWNER ALLOWED
+function editComment(e) {
+    let li = e.target
+    commentEvent = e //needed so i can access it in the callTest
+    let comment = e.target.innerText.split(':')
+    if (comment[0] === USER.username) {
+        li.contentEditable = true
+        // li.addEventListener('keyup', e => { 
+        //     if (e.key === "Enter") {
+        //         updateComment(e)
+        //     }
+        //  })
+        
+
+        document.addEventListener('click', callTest)          
+    }
+}
+//handles calling test comment with the right parameters so we can remove event listener
+function callTest(clickEvent) {
+    testComment(clickEvent, commentEvent)
+    // testComment(clickEvent)
+}
+
+//test the comment
+function testComment(clickEvent, commentEvent) {
+    let list = commentEvent.target
+    let liList = document.querySelectorAll('li')
+    let yeah = false
+    liList.forEach(li => {
+        if ((clickEvent.target === li) && (li === list)) {
+            yeah = true
+        }
+    })
+    if (!yeah) {
+        // debugger
+        updateComment(commentEvent)
+    }
+    
+}
+
+//updates the comment on the backend
+function updateComment(e) {
+    let li = e.target
+    let num = li.id.split("-")[1]
+    let newComment = {
+        content: li.innerText.replace(/\r?\n|\r/g, "").replace(`${USER.username}:`, "").trim()
+>>>>>>> main
     }
 
     let request = {
-        method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Accept": "application/json"
+            "Accept": "appllication/json"
         },
-        body: JSON.stringify(image)
+        method: "PATCH",
+        body: JSON.stringify(newComment)
     }
 
-    fetch(IMAGES, request).then(res => res.json())
-    .then(renderImages)
+
+    fetch(COMMENTS+num, request).then(res => res.json())
+    .then(res => {document.removeEventListener('click', callTest); document.getElementById(`comment-${res.id}`).contentEditable = false})
+    .catch(error => alert(error.message))
 }
+
+//-------------- END OF COMMENTS-----------------
+
+
 
 init()
