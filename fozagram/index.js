@@ -2,6 +2,8 @@ let BASE_URL = "http://localhost:3000/"
 let IMAGES = `${BASE_URL}images/`
 let COMMENTS = `${BASE_URL}comments/`
 let USER = {}
+const CLOUDINARY_URL = 	'https://api.cloudinary.com/v1_1/flatironschool/'
+const CLOUDINARY_UPLOAD_PRESET = "duk9in8e"
 
 //entryway to the app
 function init() {
