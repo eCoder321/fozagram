@@ -16,9 +16,9 @@ louis = User.create(username: "Louis")
 zed = User.create(username: "Zed")
 femi = User.create(username: "Femi")
 
-img1 = Image.create(src: "https://dev-to-uploads.s3.amazonaws.com/uploads/articles/jd4zsat1abi1ns7qshfc.jpg", alt: "Portrait: a man facing his right", )
-img2 = Image.create(src: "https://dev-to-uploads.s3.amazonaws.com/uploads/articles/oparij485sb6rtt723oh.jpg", alt: "Portrait: a man drawing")
-img3 = Image.create(src: "https://dev-to-uploads.s3.amazonaws.com/uploads/articles/bi3f52r3c0flku1i0w8g.jpg", alt: "Portrait: a smiling woman, big sur background")
-img4 = Image.create(src: "https://dev-to-uploads.s3.amazonaws.com/uploads/articles/c1wrk5z459jljt367ere.jpg", alt: "US Capitol Building looking down Pennsylvania ave")
+img1 = Image.create(src: "https://res.cloudinary.com/flatironschool/image/upload/v1615306075/2020-08-22_Ian_Zed_edits_011_gckgf2.jpg", alt: "Portrait: a man facing his right", )
+img2 = Image.create(src: "https://res.cloudinary.com/flatironschool/image/upload/v1615306075/2020-07-30_Micah_edits_005_njewio.jpg", alt: "Portrait: a man drawing")
+img3 = Image.create(src: "https://res.cloudinary.com/flatironschool/image/upload/v1615306075/2020-11-07_Esther_edits_002_guc034.jpg", alt: "Portrait: a smiling woman, big sur background")
+img4 = Image.create(src: "https://res.cloudinary.com/flatironschool/image/upload/v1615306075/2019-04-21_D.C._Edits_0001_grdnqx.jpg", alt: "US Capitol Building looking down Pennsylvania ave")
 
 zed.images.push(img1, img2, img3, img4)

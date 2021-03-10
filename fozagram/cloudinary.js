@@ -1,21 +1,22 @@
+// this code is not being called cause LOL?
 import React from 'react';
 import API from "../adapters/API";
 
-const PostForm = props => {
+const imageForm = props => {
 
   const handleSubmit = event => {
     event.preventDefault()
     const formData = new FormData(event.target)
-    API.submitPost(formData)
-      .then(data => props.setPost(data.post))
+    API.submitImage(formData)
+      .then(data => props.setImage(data.image))
       .catch(console.error);
   }
 
   return (
     <form onSubmit={handleSubmit}>
-      <label htmlFor="caption">
-        Caption
-        <input type="text" name="caption" />
+      <label htmlFor="alt">
+        alt
+        <input type="text" name="alt" />
       </label>
       <label htmlFor="image" >
         Upload image
@@ -27,4 +28,4 @@ const PostForm = props => {
   
 }
 
-export default PostForm;
+export default imageForm;
