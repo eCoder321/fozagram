@@ -110,12 +110,34 @@ function renderImages(image) {
 }
 
 //upload a new image
+// function uploadImageForm() {
+//     let imageForm = document.createElement('form')
+//     let imageSrc = document.createElement('input')
+//         imageSrc.type = 'text'
+//         imageSrc.name = "image"
+//         imageSrc.placeholder = "url to image"
+//     let imageAlt = document.createElement('input')
+//         imageAlt.type = 'text'
+//         imageAlt.name = "alt"
+//         imageAlt.placeholder = "what are you uploading?"
+//     let submitImage = document.createElement('button')
+//         submitImage.type = 'submit'
+//         submitImage.innerHTML = "Foz an image😜"
+//     imageForm.append(imageSrc, imageAlt, submitImage)
+//         imageForm.className = "image-form"
+//         imageForm.onsubmit = handleImage
+//     // bottomImageForm.innerHTML = imageForm.innerHTML
+//     // document.body.append(bottomImageForm)
+//     document.body.append(imageForm)
+//upload a new image
 function uploadImageForm() {
     let imageForm = document.createElement('form')
-    let imageSrc = document.createElement('input')
-        imageSrc.type = 'text'
-        imageSrc.name = "image"
-        imageSrc.placeholder = "url to image"
+        imageForm.className = "image-form"
+        // imageForm.onsubmit = handleImage
+    // let imageSrc = document.createElement('input')
+    //     imageSrc.type = 'text'
+    //     imageSrc.name = "image"
+    //     imageSrc.placeholder = "url to image"
     let imageAlt = document.createElement('input')
         imageAlt.type = 'text'
         imageAlt.name = "alt"
@@ -123,24 +145,87 @@ function uploadImageForm() {
     let submitImage = document.createElement('button')
         submitImage.type = 'submit'
         submitImage.innerHTML = "Foz an image😜"
-    imageForm.append(imageSrc, imageAlt, submitImage)
-        imageForm.className = "image-form"
-        imageForm.onsubmit = handleImage
-    // bottomImageForm.innerHTML = imageForm.innerHTML
-    // document.body.append(bottomImageForm)
-    document.body.append(imageForm)
+    // imageForm.append(imageSrc, imageAlt, submitImage)
+    // // bottomImageForm.innerHTML = imageForm.innerHTML
+    // // document.body.append(bottomImageForm)
+    // document.body.append(imageForm)
+
+// let fileUpload = document.createElement('form')
+//     fileUpload.class = 'file-upload-container'
+//     fileUpload.for = 'file-upload'
+
+let fileInput = document.createElement('input')
+    fileInput.id = 'file-upload'
+    fileInput.type = 'file'
+    // fileInput.style = 'display:none'
+    fileInput.innerHTML = "Select an Image"
+
+// fileUpload.appendChild(fileInput)
+// imageForm.append(fileUpload, imageAlt, submitImage)
+imageForm.append(fileInput, imageAlt, submitImage)
+document.body.prepend(imageForm)
+
+imageForm.addEventListener('submit', function(event) {
+        event.preventDefault()
+        // let file = event.target.querySelector('form')[0].files[0]
+        let file = event.target[0].files[0]
+        // console.log(file)
+        let formData = new FormData()
+        formData.append('file', file)
+        formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET)
+    
+        axios({
+            url: CLOUDINARY_URL+"upload",
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            data: formData
+        }).then(function(res) {
+            console.log(res)
+            let imageSrc = res.data.secure_url
+            // console.log(imageSrc)
+            altText = event.target.alt.value
+            // send the URL, send the user id, and send alt to handleImage
+            handleImage(imageSrc, altText)
+            document.querySelector('.image-form').reset()
+        }).catch(function(err) {
+            console.log(err)
+        })
+    })
 }
 
 //handles uploading new images on the backend
-function handleImage(e) {
-    e.preventDefault()
-    let form = e.target
+// function handleImage(e) {
+//     e.preventDefault()
+//     let form = e.target
+//     let image = {
+//         user_id: USER.id,
+//         src: form.image.value,
+//         alt: form.alt.value
+//     }
+
+//     let request = {
+//         method: "POST",
+//         headers: {
+//             "Content-Type": "application/json",
+//             "Accept": "application/json"
+//         },
+//         body: JSON.stringify(image)
+//     }
+
+//     fetch(IMAGES, request).then(res => res.json())
+//     .then(renderImages)
+function handleImage(imageSrc, altText) {
+    // debugger
+    // e.preventDefault()
+    // let form = e.target
     let image = {
         user_id: USER.id,
-        src: form.image.value,
-        alt: form.alt.value
+        src: imageSrc,
+        alt: altText //form.alt.value
     }
-
+    
     let request = {
         method: "POST",
         headers: {
@@ -149,7 +234,7 @@ function handleImage(e) {
         },
         body: JSON.stringify(image)
     }
-
+    
     fetch(IMAGES, request).then(res => res.json())
     .then(renderImages)
 }
