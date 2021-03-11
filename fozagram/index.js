@@ -54,7 +54,7 @@ function getUser(e) {
 
     function ifElse() {
         if (USER.id != null) {
-            uploadImageForm(); fetchInitialImages(); uploadFilterBtns()
+            uploadImageForm(); fetchInitialImages(); uploadFilters()
         }
         else {
             alert("Your username must be two characters or more");
@@ -75,7 +75,7 @@ function fetchImages() {
 function fetchInitialImages() {
     likePage = false
     fetchImages()
-    .then(res => res.forEach(renderImages))
+    .then(res => {res.forEach(renderImages); allImages = res})
     .catch(error => console.log(error.message))
 }
 
@@ -402,7 +402,7 @@ function deleteComment(e) {
 
 //------------FILTERS-------------
 //uploads the filter buttons
-function uploadFilterBtns() {
+function uploadFilters() {
     let filterLikeButton = document.createElement('button')
         filterLikeButton.innerHTML = "Liked images"
         filterLikeButton.onclick = filterLikedImages
@@ -415,7 +415,24 @@ function uploadFilterBtns() {
         filterMyImagesButton.innerHTML = "My Images"
         filterMyImagesButton.onclick = filterMyImages 
 
-    document.body.prepend(filterLikeButton, filterAllButton, filterMyImagesButton)
+    let sortByMostLikedBtn = document.createElement('button')
+        sortByMostLikedBtn.innerHTML = "Sort By Most Likes"
+        sortByMostLikedBtn.onclick = sortMostLiked
+
+    let sortByLeastLikedBtn = document.createElement('button')
+        sortByLeastLikedBtn.innerHTML = "Sort By Least Likes"
+        sortByLeastLikedBtn.onclick = sortLeastLiked
+
+    let sortByLeastCommentedBtn = document.createElement('button')
+        sortByLeastCommentedBtn.innerHTML = "Sort By Least Comments"
+        sortByLeastCommentedBtn.onclick = sortLeastCommented
+
+    let sortByMostCommentedBtn = document.createElement('button')
+        sortByMostCommentedBtn.innerHTML = "Sort By Most Comments"
+        sortByMostCommentedBtn.onclick = sortMostCommented
+
+    document.body.prepend(filterLikeButton, filterAllButton, filterMyImagesButton, sortByMostLikedBtn, sortByLeastLikedBtn,
+        sortByLeastCommentedBtn, sortByMostCommentedBtn)
 }
 
 //puts only USER-liked images on the DOM
@@ -428,6 +445,7 @@ function filterLikedImages() {
         })
         feed.innerHTML = ""
         likedImageArray.forEach(renderImages)
+        allImages = likedImageArray
     })  
     //was running the last .then() without the .then() and had a little bug that's now fixed
 }
@@ -448,12 +466,53 @@ function filterMyImages(e) {
         })
         feed.innerHTML = ""
         myImages.forEach(renderImages)
+        allImages = myImages
     })
 }
 //-----------END OF FILTERS--------------
 
 //------------SORTING----------
+//sorts by most liked
+function sortMostLiked() {
+    allImages.sort((image1, image2) => {
+        return image2.likes.length - image1.likes.length
+    })
+    renderSort()
+    //purposely oversimplified to reduce fetch() calls; need to click on the filter after making changes
+}
 
+//sorts by least liked
+function sortLeastLiked() {
+    allImages.sort((image1, image2) => {
+        return image1.likes.length - image2.likes.length
+    })
+    renderSort()
+    //purposely oversimplified to reduce fetch() calls; need to click on the filter after making changes
+}
+
+//sorts by least comments
+function sortLeastCommented() {
+    allImages.sort((image1, image2) => {
+        return image1.comments.length - image2.comments.length
+    })
+    renderSort()
+    //purposely oversimplified to reduce fetch() calls; need to click on the filter after making changes
+}
+
+//sort by most comments
+function sortMostCommented() {
+    allImages.sort((image1, image2) => {
+        return image2.comments.length - image1.comments.length
+    })
+    renderSort()
+    //purposely oversimplified to reduce fetch() calls; need to click on the filter after making changes
+}
+
+//clears the feed and renders the images
+function renderSort() {
+    feed.innerHTML = ""
+    allImages.forEach(renderImages)
+}
 //---------END OF SORTING--------
 
 init()
