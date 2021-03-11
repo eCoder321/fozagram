@@ -11,7 +11,6 @@ function init() {
 }
 
 //--------USER & SIGN IN---------
-
 //for getting the userName
 function signIn() {
     let main = document.createElement('main')
@@ -60,11 +59,9 @@ function getUser(e) {
         }
     }
 }
-
 //-----------END OF USER & SIGN IN-------------
 
 //-----------IMAGES SECTION-----------------
-
 //fetches the images 
 function fetchImages() {
     document.querySelector('main').hidden = true
@@ -112,7 +109,6 @@ function renderImages(image) {
 }
 
 //upload a new image
-
 function uploadImageForm() {
     let imageForm = document.createElement('form')
         imageForm.className = "image-form"
@@ -156,7 +152,7 @@ imageForm.addEventListener('submit', function(event) {
             handleImage(imageSrc, altText)
             document.querySelector('.image-form').reset()
         }).catch(function(err) {
-            console.log(err)
+            alert(err)
         })
     })
 }
@@ -238,23 +234,8 @@ function increaseLikes(e) {
 }
 
 //------------ END OF LIKES SECTION--------------
-//dynamically sets the orientation of photo
-// function checkPhoto(img) {
-//     img.onload = function() {
-//         if (this.width > this.height) {
-//             img.width = 600;
-//             img.height = 400;
-//             img.className = 'landscape'
-//         }
-//         else {
-//             img.width = 400;
-//             img.height = 600;
-//         } 
-//     }
-// }
 
 //------------------COMMENTS SECTION---------------
-
 //parses all comments and appends it to the commentsUl
 const parseComments = (comment, commentsUl) => {
         let li = document.createElement('li')
@@ -281,8 +262,6 @@ const noComments = () => {
         li.innerText = "This post has no comments, yet"
     commentsUl.appendChild(li)
 }
-
-
 
 //add a new comment
 function writeComment() {
