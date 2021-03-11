@@ -3,20 +3,20 @@ cloudinary:
 
   ---
   development:
-  cloud_name: flatironschool
-  api_key: '221383615284921'
-  api_secret: uQLGogumimMELL6hH0K3AFhUlFY
+  cloud_name: db2sov2i7
+  api_key: '668548195222133'
+  api_secret: DJn5pU805Z4oWC7wKmXuw78eAE8
   enhance_image_tag: true
   static_file_support: false
 production:
-  cloud_name: flatironschool
-  api_key: '221383615284921'
-  api_secret: uQLGogumimMELL6hH0K3AFhUlFY
+  cloud_name: db2sov2i7
+  api_key: '668548195222133'
+  api_secret: DJn5pU805Z4oWC7wKmXuw78eAE8
   enhance_image_tag: true
   static_file_support: true
 test:
-  cloud_name: flatironschool
-  api_key: '221383615284921'
-  api_secret: uQLGogumimMELL6hH0K3AFhUlFY
+  cloud_name: db2sov2i7
+  api_key: '668548195222133'
+  api_secret: DJn5pU805Z4oWC7wKmXuw78eAE8
   enhance_image_tag: true
   static_file_support: false

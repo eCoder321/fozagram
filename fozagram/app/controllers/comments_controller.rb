@@ -13,4 +13,13 @@ class CommentsController < ApplicationController
         comment.update(params.require(:comment).permit(:content))
         render json: CommentSerializer.new(comment).to_serialized_json
     end
+
+    def destroy
+        comment = Comment.find_by(id: params[:id])
+        if comment.destroy
+            render json: {status: 200, message: "success!"}
+        else
+            render json: {staus: 500, message: "an error occured"}
+        end
+    end
 end

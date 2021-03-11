@@ -2,8 +2,8 @@ let BASE_URL = "http://localhost:3000/"
 let IMAGES = `${BASE_URL}images/`
 let COMMENTS = `${BASE_URL}comments/`
 let USER = {}
-const CLOUDINARY_URL = 	'https://api.cloudinary.com/v1_1/flatironschool/'
-const CLOUDINARY_UPLOAD_PRESET = "duk9in8e"
+const CLOUDINARY_URL = 	'https://api.cloudinary.com/v1_1/db2sov2i7/'
+const CLOUDINARY_UPLOAD_PRESET = "pbb0q9cd"
 
 //entryway to the app
 function init() {
@@ -105,41 +105,17 @@ function renderImages(image) {
     commentsUl = document.createElement('ul')
         commentsUl.className = "commentsUl"
         // commentsUl.id = `comment-${image.id}`
-    image.comments.length > 0 ? image.comments.forEach(parseComments) : noComments()
+    image.comments.length > 0 ? image.comments.forEach(comment => parseComments(comment, commentsUl)) : noComments()
     let writeCommentBox = writeComment()
     imgCard.append(img, postedBy, likesDiv, commentsUl, writeCommentBox)
     mainCard.appendChild(imgCard)
 }
 
 //upload a new image
-// function uploadImageForm() {
-//     let imageForm = document.createElement('form')
-//     let imageSrc = document.createElement('input')
-//         imageSrc.type = 'text'
-//         imageSrc.name = "image"
-//         imageSrc.placeholder = "url to image"
-//     let imageAlt = document.createElement('input')
-//         imageAlt.type = 'text'
-//         imageAlt.name = "alt"
-//         imageAlt.placeholder = "what are you uploading?"
-//     let submitImage = document.createElement('button')
-//         submitImage.type = 'submit'
-//         submitImage.innerHTML = "Foz an image😜"
-//     imageForm.append(imageSrc, imageAlt, submitImage)
-//         imageForm.className = "image-form"
-//         imageForm.onsubmit = handleImage
-//     // bottomImageForm.innerHTML = imageForm.innerHTML
-//     // document.body.append(bottomImageForm)
-//     document.body.append(imageForm)
-//upload a new image
+
 function uploadImageForm() {
     let imageForm = document.createElement('form')
         imageForm.className = "image-form"
-        // imageForm.onsubmit = handleImage
-    // let imageSrc = document.createElement('input')
-    //     imageSrc.type = 'text'
-    //     imageSrc.name = "image"
-    //     imageSrc.placeholder = "url to image"
     let imageAlt = document.createElement('input')
         imageAlt.type = 'text'
         imageAlt.name = "alt"
@@ -147,14 +123,6 @@ function uploadImageForm() {
     let submitImage = document.createElement('button')
         submitImage.type = 'submit'
         submitImage.innerHTML = "Foz an image😜"
-    // imageForm.append(imageSrc, imageAlt, submitImage)
-    // // bottomImageForm.innerHTML = imageForm.innerHTML
-    // // document.body.append(bottomImageForm)
-    // document.body.append(imageForm)
-
-// let fileUpload = document.createElement('form')
-//     fileUpload.class = 'file-upload-container'
-//     fileUpload.for = 'file-upload'
 
 let fileInput = document.createElement('input')
     fileInput.id = 'file-upload'
@@ -162,16 +130,13 @@ let fileInput = document.createElement('input')
     // fileInput.style = 'display:none'
     fileInput.innerHTML = "Select an Image"
 
-// fileUpload.appendChild(fileInput)
-// imageForm.append(fileUpload, imageAlt, submitImage)
+
 imageForm.append(fileInput, imageAlt, submitImage)
 document.body.prepend(imageForm)
 
 imageForm.addEventListener('submit', function(event) {
         event.preventDefault()
-        // let file = event.target.querySelector('form')[0].files[0]
         let file = event.target[0].files[0]
-        // console.log(file)
         let formData = new FormData()
         formData.append('file', file)
         formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET)
@@ -186,7 +151,6 @@ imageForm.addEventListener('submit', function(event) {
         }).then(function(res) {
             console.log(res)
             let imageSrc = res.data.secure_url
-            // console.log(imageSrc)
             altText = event.target.alt.value
             // send the URL, send the user id, and send alt to handleImage
             handleImage(imageSrc, altText)
@@ -219,9 +183,6 @@ imageForm.addEventListener('submit', function(event) {
 //     fetch(IMAGES, request).then(res => res.json())
 //     .then(renderImages)
 function handleImage(imageSrc, altText) {
-    // debugger
-    // e.preventDefault()
-    // let form = e.target
     let image = {
         user_id: USER.id,
         src: imageSrc,
@@ -295,18 +256,29 @@ function increaseLikes(e) {
 //------------------COMMENTS SECTION---------------
 
 //parses all comments and appends it to the commentsUl
-const parseComments = comment => {
+const parseComments = (comment, commentsUl) => {
         let li = document.createElement('li')
             li.id = `comment-${comment.id}`
-            li.innerHTML = `${comment.user.username}: ${comment.content}`
-            li.ondblclick = editComment
+            li.className = "commentLi"
+            li.innerHTML = `${comment.user.username}: `
+        let commentDiv = document.createElement('div')
+            commentDiv.innerHTML = `${comment.content}`
+            commentDiv.ondblclick = editComment
+            li.append(commentDiv)
+        if (USER.id === comment.user_id) {
+            let delButton = document.createElement('button')
+                delButton.className = "delButton"
+                delButton.onclick = deleteComment
+                li.append(delButton)
+        }
+            //li.append(commentDiv, delButton)
         commentsUl.appendChild(li)
     }
 
 // informs users that there's no comment yet
 const noComments = () => {
     let li = document.createElement('li')
-        li.innerHTML = "This post has no comments, yet"
+        li.innerText = "This post has no comments, yet"
     commentsUl.appendChild(li)
 }
 
@@ -349,30 +321,19 @@ function handleComment(e) {
     fetch(BASE_URL+"comments", request).then(res => res.json())
     .then(comment => {
         let commentsUl = document.getElementById(comment.image_id).querySelector('ul')
-        // let updateCommentBtn = document.createElement('button')
-        //     updateCommentBtn.innerHTML = "Update"
-        //     updateCommentBtn.type = 'submit'
-        let li = document.createElement('li')
-            li.innerHTML = `${comment.user.username}: ${comment.content}`
-            li.id = `comment-${comment.id}`
-            li.ondblclick = editComment
-            // li.appendChild(updateCommentBtn)
-        if (commentsUl.innerText == "This post has no comments, yet") {
-            commentsUl.innerHTML = ""
-        }
-        commentsUl.appendChild(li)
-    })    
+        parseComments(comment, commentsUl)
+    })
 
     form.reset()
 }
 
 //edits a comment ONLY OWNER ALLOWED
 function editComment(e) {
-    let li = e.target
+    let li = e.target.parentElement
     commentEvent = e //needed so i can access it in the callTest
-    let comment = e.target.innerText.split(':')
-    if (comment[0] === USER.username) {
-        li.contentEditable = true
+    let comment = e.target
+    if (li.innerHTML.split(':')[0] === USER.username) {
+        comment.contentEditable = true
         // li.addEventListener('keyup', e => { 
         //     if (e.key === "Enter") {
         //         updateComment(e)
@@ -391,16 +352,16 @@ function callTest(clickEvent) {
 
 //test the comment
 function testComment(clickEvent, commentEvent) {
-    let list = commentEvent.target
+    let commentDiv = commentEvent.target
     let liList = document.querySelectorAll('li')
     let yeah = false
     liList.forEach(li => {
-        if ((clickEvent.target === li) && (li === list)) {
+        if ((clickEvent.target === commentDiv)) {
             yeah = true
         }
     })
+    
     if (!yeah) {
-        // debugger
         updateComment(commentEvent)
     }
     
@@ -408,10 +369,10 @@ function testComment(clickEvent, commentEvent) {
 
 //updates the comment on the backend
 function updateComment(e) {
-    let li = e.target
+    let li = e.target.parentElement
     let num = li.id.split("-")[1]
     let newComment = {
-        content: li.innerText.replace(/\r?\n|\r/g, "").replace(`${USER.username}:`, "").trim()
+        content: commentEvent.target.innerText //li.innerText.replace(/\r?\n|\r/g, "").replace(`${USER.username}:`, "").trim()
     }
 
     let request = {
@@ -422,15 +383,31 @@ function updateComment(e) {
         method: "PATCH",
         body: JSON.stringify(newComment)
     }
-
+    // debugger
 
     fetch(COMMENTS+num, request).then(res => res.json())
-    .then(res => {document.removeEventListener('click', callTest); document.getElementById(`comment-${res.id}`).contentEditable = false})
+    .then(res => {document.removeEventListener('click', callTest); document.getElementById(`comment-${res.id}`).querySelector('div').contentEditable = false})
     .catch(error => alert(error.message))
 }
 
+//handles deleting a comment
+function deleteComment(e) {
+    let li = e.target.parentElement
+    let num = li.id.split('-')[1]
+    let request = {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    }
+    // debugger
+    fetch(COMMENTS+num, request).then(res => res.json())
+    .then(res => {li.remove()})
+}
 //-------------- END OF COMMENTS-----------------
 
+//------------SORTING-------------
 
+//-----------END OF SORTING--------------
 
 init()

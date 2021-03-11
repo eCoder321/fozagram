@@ -11,6 +11,8 @@
     font-size: 18px;
 }
 
+
+
 .imageDiv {
   margin: auto;
   width: 40%;
@@ -20,7 +22,7 @@
   border: 8px solid Black;
   border-radius: 15px;
   text-align: center;
-  background-color: white;
+  background-color: lavender;
 }
 
 .img {
@@ -121,6 +123,39 @@
     padding: 0px;
     top: 0;
     left: 0;
-    background:white;
+    background:orange;
     font-weight:bold;
+}
+
+body {
+  margin-top: 37px;
+  background-color: powderblue;
+} 
+
+.delButton {
+  outline-style: none;
+  background-image: url('https://image.flaticon.com/icons/png/512/49/49934.png');
+  width: 20px;
+  height: 20px;
+  background-color: lavender;
+  background-size: cover;
+  border: none;
+  cursor: pointer;
+}
+
+.delButton:hover {
+  background-image: url('https://image.flaticon.com/icons/png/512/49/49854.png');
+  width: 20px;
+  height: 20px;
+  background-color: lavender;
+  background-size: cover;
+  border: none;
+  cursor: pointer;
+  outline-style: none;
+}
+
+.commentLi {
+  display: flex;
+  flex-direction: row;
+  text-align: center;
 }
