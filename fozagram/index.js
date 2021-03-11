@@ -2,6 +2,8 @@ let BASE_URL = "http://localhost:3000/"
 let IMAGES = `${BASE_URL}images/`
 let COMMENTS = `${BASE_URL}comments/`
 let USER = {}
+let allImages = []
+let feed = document.querySelector('feed')
 const CLOUDINARY_URL = 	'https://api.cloudinary.com/v1_1/db2sov2i7/'
 const CLOUDINARY_UPLOAD_PRESET = "pbb0q9cd"
 
@@ -49,9 +51,10 @@ function getUser(e) {
     
     fetch(BASE_URL+ "users/get_user", request).then(res => res.json())
     .then(res => {USER = {id: res.id, username: res.username}; ifElse()})
+
     function ifElse() {
         if (USER.id != null) {
-            uploadImageForm(); fetchImages()
+            uploadImageForm(); fetchInitialImages(); uploadFilterBtns()
         }
         else {
             alert("Your username must be two characters or more");
@@ -62,10 +65,16 @@ function getUser(e) {
 //-----------END OF USER & SIGN IN-------------
 
 //-----------IMAGES SECTION-----------------
-//fetches the images 
+//used to fetch images, reused in the filter section
 function fetchImages() {
     document.querySelector('main').hidden = true
-    fetch(BASE_URL+"images").then(res => res.json())
+    return fetch(BASE_URL+"images").then(res => res.json())
+}
+
+//fetches the images the first time and renders them all on the DOM
+function fetchInitialImages() {
+    likePage = false
+    fetchImages()
     .then(res => res.forEach(renderImages))
     .catch(error => console.log(error.message))
 }
@@ -96,7 +105,7 @@ function renderImages(image) {
         likeColorChanger(image.likes, likeButton)
         likeButton.innerText = "♥︎"
         likeButton.dataset.id = image.id
-        likeButton.dataset.likes = image.likes.length
+        // likeButton.dataset.likes = image.likes.length
         likeButton.onclick = increaseLikes
     likesDiv.append(likeSpan, likeButton)
     commentsUl = document.createElement('ul')
@@ -207,6 +216,9 @@ function likeColorChanger(likes, likeButton) {
     }
     else {
         likeButton.className = "likeButton"
+        if (likePage) {
+            document.getElementById(likeButton.dataset.id).style.display = "none"
+        }
     }
 }
 
@@ -300,6 +312,9 @@ function handleComment(e) {
     fetch(BASE_URL+"comments", request).then(res => res.json())
     .then(comment => {
         let commentsUl = document.getElementById(comment.image_id).querySelector('ul')
+        if (commentsUl.innerText.trim() == "This post has no comments, yet") {
+            commentsUl.innerHTML = ""
+        }
         parseComments(comment, commentsUl)
     })
 
@@ -385,8 +400,60 @@ function deleteComment(e) {
 }
 //-------------- END OF COMMENTS-----------------
 
-//------------SORTING-------------
+//------------FILTERS-------------
+//uploads the filter buttons
+function uploadFilterBtns() {
+    let filterLikeButton = document.createElement('button')
+        filterLikeButton.innerHTML = "Liked images"
+        filterLikeButton.onclick = filterLikedImages
 
-//-----------END OF SORTING--------------
+    let filterAllButton = document.createElement('button')
+        filterAllButton.innerHTML = "All Images"
+        filterAllButton.onclick = filterAllImages
+
+    let filterMyImagesButton = document.createElement('button')
+        filterMyImagesButton.innerHTML = "My Images"
+        filterMyImagesButton.onclick = filterMyImages 
+
+    document.body.prepend(filterLikeButton, filterAllButton, filterMyImagesButton)
+}
+
+//puts only USER-liked images on the DOM
+function filterLikedImages() {
+    likePage = true // used to determine when unliking an image sohuld remove it from the screen 
+    fetchImages().then(res => {
+        let likedImageArray = res.filter(image => {
+            let imageLikesId = image.likes.map(like => like.user_id)
+            return imageLikesId.includes(USER.id)
+        })
+        feed.innerHTML = ""
+        likedImageArray.forEach(renderImages)
+    })  
+    //was running the last .then() without the .then() and had a little bug that's now fixed
+}
+
+//puts all images back on screen
+function filterAllImages(e) {
+    likePage = false
+    feed.innerHTML = ""
+    fetchInitialImages()
+}
+
+//puts images posted by user on screen
+function filterMyImages(e) {
+    likePage = false
+    fetchImages().then(res => {
+        let myImages = res.filter(image => {
+            return image.user_id == USER.id
+        })
+        feed.innerHTML = ""
+        myImages.forEach(renderImages)
+    })
+}
+//-----------END OF FILTERS--------------
+
+//------------SORTING----------
+
+//---------END OF SORTING--------
 
 init()
