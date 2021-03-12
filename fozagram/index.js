@@ -74,6 +74,7 @@ function fetchImages() {
 //fetches the images the first time and renders them all on the DOM
 function fetchInitialImages() {
     likePage = false
+    myImagesPage = false
     fetchImages()
     .then(res => {res.forEach(renderImages); allImages = res})
     .catch(error => console.log(error.message))
@@ -124,7 +125,7 @@ function uploadImageForm() {
     let imageAlt = document.createElement('input')
         imageAlt.type = 'text'
         imageAlt.name = "alt"
-        imageAlt.placeholder = "what are you uploading?"
+        imageAlt.placeholder = "image description"
     let submitImage = document.createElement('button')
         submitImage.type = 'submit'
         submitImage.innerHTML = "Foz an image😜"
@@ -405,7 +406,8 @@ function deleteComment(e) {
 function uploadFilters() {
     let filterLikeButton = document.createElement('button')
         filterLikeButton.innerHTML = "Liked images"
-        filterLikeButton.onclick = filterLikedImages
+        filterLikeButton.className = "filterBtn"
+        filterLikeButton.onclick = renderLikedImages
 
     let filterAllButton = document.createElement('button')
         filterAllButton.innerHTML = "All Images"
@@ -413,7 +415,7 @@ function uploadFilters() {
 
     let filterMyImagesButton = document.createElement('button')
         filterMyImagesButton.innerHTML = "My Images"
-        filterMyImagesButton.onclick = filterMyImages 
+        filterMyImagesButton.onclick = renderMyImages 
 
     let sortByMostLikedBtn = document.createElement('button')
         sortByMostLikedBtn.innerHTML = "Sort By Most Likes"
@@ -435,77 +437,129 @@ function uploadFilters() {
         sortByLeastCommentedBtn, sortByMostCommentedBtn)
 }
 
-//puts only USER-liked images on the DOM
+
+//filters only USER-liked images
 function filterLikedImages() {
-    likePage = true // used to determine when unliking an image sohuld remove it from the screen 
-    fetchImages().then(res => {
+    likePage = true // used to determine when unliking an image should remove it from the screen 
+    myImagesPage = false
+    return fetchImages().then(res => {
         let likedImageArray = res.filter(image => {
             let imageLikesId = image.likes.map(like => like.user_id)
             return imageLikesId.includes(USER.id)
         })
+        return likedImageArray
+    })
+}
+//puts only USER-liked images on the DOM
+function renderLikedImages() {
+    filterLikedImages().then(res => {
         feed.innerHTML = ""
-        likedImageArray.forEach(renderImages)
-        allImages = likedImageArray
-    })  
-    //was running the last .then() without the .then() and had a little bug that's now fixed
+        res.forEach(renderImages)
+    })
 }
 
 //puts all images back on screen
 function filterAllImages(e) {
-    likePage = false
     feed.innerHTML = ""
     fetchInitialImages()
 }
 
-//puts images posted by user on screen
+//filters images posted by user
 function filterMyImages(e) {
     likePage = false
-    fetchImages().then(res => {
+    myImagesPage = true
+    return fetchImages().then(res => {
         let myImages = res.filter(image => {
             return image.user_id == USER.id
         })
-        feed.innerHTML = ""
-        myImages.forEach(renderImages)
-        allImages = myImages
+        return myImages
     })
+}
+
+//puts images posted by user on screen
+function renderMyImages(e) {
+    filterMyImages().then(res => {
+        feed.innerHTML = ""
+        res.forEach(renderImages)
+     })
 }
 //-----------END OF FILTERS--------------
 
 //------------SORTING----------
 //sorts by most liked
 function sortMostLiked() {
-    allImages.sort((image1, image2) => {
-        return image2.likes.length - image1.likes.length
-    })
-    renderSort()
-    //purposely oversimplified to reduce fetch() calls; need to click on the filter after making changes
+    if (likePage) {
+        filterLikedImages().then(res => {allImages = res; realSorting()})
+    }
+    else if (myImagesPage) {
+        filterMyImages().then(res => {allImages = res; realSorting()})
+    }
+    else {
+        realSorting()
+    }
+
+    function realSorting() {allImages.sort((image1, image2) => {
+            return image2.likes.length - image1.likes.length
+        })
+        renderSort()
+    }
 }
 
 //sorts by least liked
 function sortLeastLiked() {
-    allImages.sort((image1, image2) => {
-        return image1.likes.length - image2.likes.length
-    })
-    renderSort()
-    //purposely oversimplified to reduce fetch() calls; need to click on the filter after making changes
+    if (likePage) {
+        filterLikedImages().then(res => {allImages = res; realSorting()})
+    }
+    else if (myImagesPage) {
+        filterMyImages().then(res => {allImages = res; realSorting()})
+    }
+    else {
+        realSorting()
+    }
+
+    function realSorting() {allImages.sort((image1, image2) => {
+            return image1.likes.length - image2.likes.length
+        })
+        renderSort()
+    }
 }
 
 //sorts by least comments
 function sortLeastCommented() {
-    allImages.sort((image1, image2) => {
+    if (likePage) {
+        filterLikedImages().then(res => {allImages = res; realSorting()})
+    }
+    else if (myImagesPage) {
+        filterMyImages().then(res => {allImages = res; realSorting()})
+    }
+    else {
+        realSorting()
+    }
+
+    function realSorting() {allImages.sort((image1, image2) => {
         return image1.comments.length - image2.comments.length
     })
     renderSort()
-    //purposely oversimplified to reduce fetch() calls; need to click on the filter after making changes
+    }
 }
 
 //sort by most comments
 function sortMostCommented() {
-    allImages.sort((image1, image2) => {
+    if (likePage) {
+        filterLikedImages().then(res => {allImages = res; realSorting()})
+    }
+    else if (myImagesPage) {
+        filterMyImages().then(res => {allImages = res; realSorting()})
+    }
+    else {
+        realSorting()
+    }
+
+    function realSorting() {allImages.sort((image1, image2) => {
         return image2.comments.length - image1.comments.length
-    })
-    renderSort()
-    //purposely oversimplified to reduce fetch() calls; need to click on the filter after making changes
+        })
+        renderSort()
+    }
 }
 
 //clears the feed and renders the images
