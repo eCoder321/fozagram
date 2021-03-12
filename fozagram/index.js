@@ -443,8 +443,6 @@ function uploadFilters() {
 
 //filters only USER-liked images
 function filterLikedImages() {
-    likePage = true // used to determine when unliking an image should remove it from the screen 
-    myImagesPage = false
     return fetchImages().then(res => {
         let likedImageArray = res.filter(image => {
             let imageLikesId = image.likes.map(like => like.user_id)
@@ -455,6 +453,8 @@ function filterLikedImages() {
 }
 //puts only USER-liked images on the DOM
 function renderLikedImages() {
+    likePage = true // used to determine when unliking an image should remove it from the screen 
+    myImagesPage = false
     filterLikedImages().then(res => {
         feed.innerHTML = ""
         res.forEach(renderImages)
@@ -469,8 +469,6 @@ function filterAllImages(e) {
 
 //filters images posted by user
 function filterMyImages(e) {
-    likePage = false
-    myImagesPage = true
     return fetchImages().then(res => {
         let myImages = res.filter(image => {
             return image.user_id == USER.id
@@ -481,6 +479,8 @@ function filterMyImages(e) {
 
 //puts images posted by user on screen
 function renderMyImages(e) {
+    likePage = false
+    myImagesPage = true
     filterMyImages().then(res => {
         feed.innerHTML = ""
         res.forEach(renderImages)
@@ -489,18 +489,13 @@ function renderMyImages(e) {
 //-----------END OF FILTERS--------------
 
 //------------SORTING----------
+            //sortCondtional gets the updates from the backend while 
+            //realSorting filters through the updated data and puts them on the DOM
+
 //sorts by most liked
 function sortMostLiked() {
-    if (likePage) {
-        filterLikedImages().then(res => {allImages = res; realSorting()})
-    }
-    else if (myImagesPage) {
-        filterMyImages().then(res => {allImages = res; realSorting()})
-    }
-    else {
-        realSorting()
-    }
-
+    sortConditional(realSorting)
+    
     function realSorting() {allImages.sort((image1, image2) => {
             return image2.likes.length - image1.likes.length
         })
@@ -510,15 +505,7 @@ function sortMostLiked() {
 
 //sorts by least liked
 function sortLeastLiked() {
-    if (likePage) {
-        filterLikedImages().then(res => {allImages = res; realSorting()})
-    }
-    else if (myImagesPage) {
-        filterMyImages().then(res => {allImages = res; realSorting()})
-    }
-    else {
-        realSorting()
-    }
+    sortConditional(realSorting)
 
     function realSorting() {allImages.sort((image1, image2) => {
             return image1.likes.length - image2.likes.length
@@ -529,15 +516,7 @@ function sortLeastLiked() {
 
 //sorts by least comments
 function sortLeastCommented() {
-    if (likePage) {
-        filterLikedImages().then(res => {allImages = res; realSorting()})
-    }
-    else if (myImagesPage) {
-        filterMyImages().then(res => {allImages = res; realSorting()})
-    }
-    else {
-        realSorting()
-    }
+    sortConditional(realSorting)
 
     function realSorting() {allImages.sort((image1, image2) => {
         return image1.comments.length - image2.comments.length
@@ -548,6 +527,17 @@ function sortLeastCommented() {
 
 //sort by most comments
 function sortMostCommented() {
+    sortConditional(realSorting)
+
+    function realSorting() {allImages.sort((image1, image2) => {
+        return image2.comments.length - image1.comments.length
+        })
+        renderSort()
+    }
+}
+
+//gets updates from the backend for the sort-bys
+function sortConditional(realSorting) {
     if (likePage) {
         filterLikedImages().then(res => {allImages = res; realSorting()})
     }
@@ -555,13 +545,7 @@ function sortMostCommented() {
         filterMyImages().then(res => {allImages = res; realSorting()})
     }
     else {
-        realSorting()
-    }
-
-    function realSorting() {allImages.sort((image1, image2) => {
-        return image2.comments.length - image1.comments.length
-        })
-        renderSort()
+        fetchImages().then(res => {allImages = res; realSorting()})
     }
 }
 

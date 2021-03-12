@@ -162,6 +162,9 @@ body {
 
 .filterBtns {
   display: flex;
-  flex-direction: row;
-  align-content: ;
+  flex-direction: column;
+  justify-content: center;
+  position: fixed;
+  margin-top: 18px;
+  background-color: lavender;
 }
