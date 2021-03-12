@@ -404,6 +404,8 @@ function deleteComment(e) {
 //------------FILTERS-------------
 //uploads the filter buttons
 function uploadFilters() {
+    let filterBtns = document.createElement('div')
+        filterBtns.className = "filterBtns"
     let filterLikeButton = document.createElement('button')
         filterLikeButton.innerHTML = "Liked images"
         filterLikeButton.className = "filterBtn"
@@ -433,8 +435,9 @@ function uploadFilters() {
         sortByMostCommentedBtn.innerHTML = "Sort By Most Comments"
         sortByMostCommentedBtn.onclick = sortMostCommented
 
-    document.body.prepend(filterLikeButton, filterAllButton, filterMyImagesButton, sortByMostLikedBtn, sortByLeastLikedBtn,
+    filterBtns.append(filterLikeButton, filterAllButton, filterMyImagesButton, sortByMostLikedBtn, sortByLeastLikedBtn,
         sortByLeastCommentedBtn, sortByMostCommentedBtn)
+        document.body.prepend(filterBtns)
 }
 
 
